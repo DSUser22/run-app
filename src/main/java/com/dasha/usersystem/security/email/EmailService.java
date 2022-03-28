@@ -26,15 +26,12 @@ public class EmailService implements EmailSender{
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
             helper.setTo(toEmail);
             helper.setSubject("Подтверждение email");
-            /*helper.setText(String.format("Здравствуй, %s!\n" +
-                    "Спасибо за регистрацию. Пожалуйста, активируй аккаун по ссылке ниже\n" +
-                    "%s\n" +
-                    "Ссылка активна 15 минут", name, url));*/
+            
             helper.setText("Активация аккаунта по ссылке ниже:\n" +
                     ""+url);
 
 
-            helper.setFrom("havegoodrunnings@gmail.com");
+            helper.setFrom(""); // !!! вставить email, с которого будут отправляться письма
             mailSender.send(mimeMessage);
         } catch (MessagingException e){
             LOGGER.error("sending messages failed", e);
@@ -45,11 +42,10 @@ public class EmailService implements EmailSender{
         try{
         MimeMessage helloMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(helloMessage, "utf-8");
-            helper.setFrom("havegoodrunnings@gmail.com");
+            helper.setFrom(""); // !!! вставить email, с которого будут отправляться письма
             helper.setTo(toEmail);
             helper.setSubject("Аккаунт подтверждён");
             helper.setText("");
-            //helper.setText(name+", спасибо за регистрацию! Хороших пробежек :)");
             mailSender.send(helloMessage);
         } catch (MessagingException e){
             LOGGER.error("sending message after confirmation failed", e);
