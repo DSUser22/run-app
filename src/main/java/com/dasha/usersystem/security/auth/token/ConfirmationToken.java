@@ -33,10 +33,11 @@ public class ConfirmationToken {
 
     private LocalDateTime confirmedAt;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(
             nullable = false,
-            name = "app_user_id"
+            name = "username",
+            referencedColumnName = "username"
     )
     private AppUser appUser;
 

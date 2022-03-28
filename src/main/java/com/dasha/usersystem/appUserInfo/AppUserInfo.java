@@ -7,30 +7,31 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AppUserInfo {
+public class AppUserInfo implements Serializable {
     @Id
     @SequenceGenerator(
-            name = "user_info_sequence",
-            sequenceName = "user_info_sequence",
+            name = "app_user_info_sequence",
+            sequenceName = "app_user_info_sequence",
             allocationSize = 1
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "user_info_sequence"
+            generator = "app_user_info_sequence"
     )
     private Long id;
     private String firstName;
     private String secondName;
     private String city;
     private Integer age;
-    private boolean doesPlanExist;
-    private String photo_link;
+    private boolean planExist;
+    private String photoLink;
     @OneToOne
     @JoinColumn(
             nullable = false,
@@ -43,7 +44,7 @@ public class AppUserInfo {
         this.secondName = null;
         this.city = null;
         this.age = null;
-        this.doesPlanExist = false;
+        this.planExist = false;
         this.appUser = appUser;
     }
     public AppUserInfo(AppUser user, AppUserInfoRequest request){
@@ -53,4 +54,5 @@ public class AppUserInfo {
         this.city = request.getCity();
         this.age = request.getAge();
     }
+
 }

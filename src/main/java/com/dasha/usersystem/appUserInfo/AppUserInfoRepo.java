@@ -12,8 +12,9 @@ import java.util.Optional;
 @Repository
 @Transactional(readOnly = true)
 public interface AppUserInfoRepo extends JpaRepository<AppUserInfo, Long> {
-    @Query("FROM AppUserInfo WHERE username = ?1")
-    Optional<AppUserInfo> findAppUserInfoByUsername(String username);
+    /*@Query("FROM AppUserInfo WHERE username = ?1")
+    Optional<AppUserInfo> findAppUserInfoByUsername(String username);*/
+    Optional<AppUserInfo> findAppUserInfoByAppUserUsername(String username);
 
     @Transactional
     @Modifying
@@ -25,15 +26,14 @@ public interface AppUserInfoRepo extends JpaRepository<AppUserInfo, Long> {
     void update(AppUser appUser, String firstName,
                            String secondName, String city, Integer age);
 
-
-    /*@Transactional
+    @Transactional
     @Modifying
-    @Query("UPDATE AppUserInfo u SET u.isDoesPlanExist = true WHERE u.username = ?1")
-    void planExists(String username);*/
+    @Query("UPDATE AppUserInfo u SET u.planExist = ?2 WHERE u.appUser = ?1")
+    void planExists(AppUser appUser, boolean planExists);
 
-    /*@Transactional
+    @Transactional
     @Modifying
-    @Query("UPDATE AppUserInfo u SET u.isDoesPlanExist = false WHERE u.appUser.username = ?1")
-    void planDoesntExist(String username);*/
+    @Query("DELETE AppUserInfo WHERE username = ?1")
+    void deleteAppUserInfoByAppUserUsername(String username);
 
 }

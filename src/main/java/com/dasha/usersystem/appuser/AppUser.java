@@ -9,6 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -17,17 +18,17 @@ import java.util.Collections;
 @NoArgsConstructor
 @EqualsAndHashCode
 @Entity
-public class AppUser implements UserDetails {
+public class AppUser implements UserDetails, Serializable {
 
     @Id
     @SequenceGenerator(
-            name = "user_sequence",
-            sequenceName = "user_sequence",
+            name = "app_user_sequence",
+            sequenceName = "app_user_sequence",
             allocationSize = 1
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "user_sequence"
+            generator = "app_user_sequence"
     )
     private Long id;
     private String username;

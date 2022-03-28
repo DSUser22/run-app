@@ -1,36 +1,46 @@
 package com.dasha.usersystem.plan;
 
+import com.dasha.usersystem.training.TrainingRepo;
+import com.dasha.usersystem.plan.planService.TrainingFactoryService;
 import com.dasha.usersystem.appUserInfo.AppUserInfoRepo;
 import com.dasha.usersystem.appuser.AppUser;
 import com.dasha.usersystem.appuser.AppUserRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
 public class PlanService {
     private final PlanRepo planRepo;
+    private final TrainingRepo trainingRepo;
     private final AppUserRepo appUserRepo;
     private final AppUserInfoRepo appUserInfoRepo;
+    private final TrainingFactoryService trainingFactoryService;
 
-    public void savePlanInfo(String username, PlanRequest request){
+    @Transactional
+    public void savePlan(String username, PlanRequest request){
         AppUser appUser = appUserRepo.findByUsername(username).orElseThrow(
                 () ->new IllegalStateException("user not found"));
-        PlanInfo planInfo = new PlanInfo(appUser, request);
-        planRepo.save(planInfo);
-        // TODO:: в PlanUserInfo doesPlanExist
-    }
-    public PlanInfo getPlanInfo(String username){
-        return planRepo.getPlanInfo(username).orElseThrow(()->new IllegalStateException("smth went wrong"));
+        Plan plan = new Plan(appUser, request);
+        planRepo.save(plan);
+        trainingFactoryService.createTrainings(plan);
+        appUserInfoRepo.planExists(appUser, true);
     }
 
-    // TODO:: deletePlan
+    @Transactional
+    public Plan getPlan(String username){
+        return planRepo.findPlanByAppUserUsername(username).orElseThrow(()->new IllegalStateException("plan not found"));
+    }
 
-    /*public void deletePlanInfo(String username) {
-        planRepo.deleteByUsername(username);
-        appUserInfoRepo.planDoesntExist(username);
+    @Transactional
+    public void deletePlan(String username) {
+        AppUser appUser = appUserRepo.findByUsername(username).orElseThrow(
+                () ->new IllegalStateException("user not found"));
+        Plan plan = getPlan(username);
+        trainingRepo.deleteAllByPlanId(plan.getId());
+        planRepo.delete(plan);
+        appUserInfoRepo.planExists(appUser, false);
+    }
 
-    }*/
 }

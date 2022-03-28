@@ -24,4 +24,8 @@ public class ConfirmationTokenService {
         return repository.updateConfirmedAt(token, LocalDateTime.now());
     }
 
+    public void delete(String username){
+        repository.deleteAllByAppUserUsername(username);
+    }
+
 }

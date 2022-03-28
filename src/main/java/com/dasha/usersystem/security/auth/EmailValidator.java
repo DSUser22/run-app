@@ -14,5 +14,6 @@ public class EmailValidator implements Predicate<String> {
         // TODO: businessLogic
         return Pattern.compile(EMAIL_PATTERN).matcher(s).matches();
     }
+
 }
 

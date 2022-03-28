@@ -1,4 +1,4 @@
-package com.dasha.usersystem.email;
+package com.dasha.usersystem.security.email;
 
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;

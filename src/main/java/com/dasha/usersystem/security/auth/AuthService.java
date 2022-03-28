@@ -4,7 +4,7 @@ import com.dasha.usersystem.appuser.AppUser;
 import com.dasha.usersystem.appUserInfo.AppUserInfo;
 import com.dasha.usersystem.appuser.AppUserRole;
 import com.dasha.usersystem.appuser.AppUserService;
-import com.dasha.usersystem.email.EmailService;
+import com.dasha.usersystem.security.email.EmailService;
 import com.dasha.usersystem.appUserInfo.AppUserInfoService;
 import com.dasha.usersystem.security.auth.token.ConfirmationToken;
 import com.dasha.usersystem.security.auth.token.ConfirmationTokenService;
@@ -28,9 +28,6 @@ public class AuthService {
     public UserDetails auth(String username){
         return appUserService.loadUserByUsername(username);
     }
-    /*public Long getIdByUsername(String username){
-        return appUserService.getIdByUsername(username);
-    }*/
 
     public String register(AuthRequest request) {
         boolean isEmailValid = emailValidator.test(request.getUsername());

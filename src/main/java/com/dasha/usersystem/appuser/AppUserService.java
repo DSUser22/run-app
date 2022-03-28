@@ -60,4 +60,7 @@ public class AppUserService implements UserDetailsService {
         return appUserRepo.enableAppUser(email);
     }
 
+    public void deleteAppUser(String username){
+        appUserRepo.deleteAppUserByUsername(username);
+    }
 }
