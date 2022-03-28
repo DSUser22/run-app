@@ -5,8 +5,8 @@ server:
 
 spring:
   datasource:
-    password: dasha
-    url: jdbc:postgresql://localhost:5432/run_app
+#    password: пароль БД
+#    url: адрес БД
     username: postgres
   jpa:
     hibernate:
@@ -17,10 +17,10 @@ spring:
         format_sql: true
     show-sql: true
   mail:
-    host: smtp.gmail.com
+#    host: smtp.gmail.com
     port: 587
-    username: havegoodrunnings@gmail.com
-    password: ebdzisnwzorfsazd
+#    username: адрес почты для отправки писем
+#    password: пароль для почты
     properties:
       mail:
         smtp:
