@@ -30,12 +30,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter  {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
-                //.authorizeRequests()
-                //.antMatchers("/api/v1/register","/api/v1/confirm")
-                //.permitAll().and()
                 .authorizeRequests()
                 .antMatchers("/api/v1/auth", "/api/v1/register","/api/v1/confirm")
                 .permitAll().anyRequest().authenticated();
+        //http.logout();
         http
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
@@ -57,4 +55,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter  {
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
+
 }

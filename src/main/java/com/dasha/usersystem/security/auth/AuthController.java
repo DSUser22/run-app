@@ -14,6 +14,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping(path = "/api/v1")
 @AllArgsConstructor
@@ -32,12 +34,12 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
 
     @PostMapping(path = "register")
-    public String register(@RequestBody AuthRequest request){
+    public String register(@Valid @RequestBody AuthRequest request){
         return authService.register(request);
     }
 
     @PostMapping(path = "auth")
-    public JWTResponse auth(@RequestBody AuthRequest request){
+    public JWTResponse auth(@Valid @RequestBody AuthRequest request){
 
         try {
             authenticationManager.authenticate(
@@ -58,15 +60,15 @@ public class AuthController {
     @DeleteMapping(path = "delete")
     public void delete(@RequestHeader(name="Authorization") String token){
         String username = getUsername(token);
-        // план и тренировки
+
         planService.deletePlan(username);
-        // конфирм
         confirmationTokenService.delete(username);
-        // юзер инфо
         appUserInfoService.deleteAppUserInfo(username);
         appUserService.deleteAppUser(username);
-        //юзер
-
+    }
+    @GetMapping(path = "hello")
+    public String hello(){
+        return "hello, guest";
     }
 
     String getUsername(String token){

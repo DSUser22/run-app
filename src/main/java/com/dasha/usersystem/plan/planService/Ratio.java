@@ -30,12 +30,4 @@ public class Ratio {
         run[weeks-1]=52;
         return run;
     }
-
-    /*public static void main(String[] args) {
-        int[] rat = ratio(16, 5);
-        for (int i = 0; i < rat.length; i++) {
-            System.out.println(i+": "+rat[i]);
-        }
-    }*/
-
 }

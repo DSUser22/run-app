@@ -17,12 +17,16 @@ public class PlanService {
     private final AppUserRepo appUserRepo;
     private final AppUserInfoRepo appUserInfoRepo;
     private final TrainingFactoryService trainingFactoryService;
+    private final MarathonDateValidator marathonDateValidator;
 
     @Transactional
     public void savePlan(String username, PlanRequest request){
         AppUser appUser = appUserRepo.findByUsername(username).orElseThrow(
                 () ->new IllegalStateException("user not found"));
         Plan plan = new Plan(appUser, request);
+        if(!marathonDateValidator.test(plan.getCountOfWeeks())){
+            throw new IllegalStateException("very few weeks");
+        }
         planRepo.save(plan);
         trainingFactoryService.createTrainings(plan);
         appUserInfoRepo.planExists(appUser, true);

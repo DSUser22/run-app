@@ -34,7 +34,8 @@ public class AppUserService implements UserDetailsService {
         return new User(user.getUsername(), user.getPassword(), user.getAuthorities());
     }
     public void isUserExists(String email){
-        if(appUserRepo.findByUsername(email).isPresent()){
+        boolean b = appUserRepo.findByUsername(email).isPresent();
+        if(b){
             throw new IllegalStateException("user already exists");
         }
     }

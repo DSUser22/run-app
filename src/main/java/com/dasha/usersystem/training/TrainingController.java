@@ -7,6 +7,7 @@ import com.dasha.usersystem.training.type.running.Running;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Min;
 import java.util.List;
 
 @AllArgsConstructor
@@ -27,18 +28,18 @@ public class TrainingController {
     @GetMapping(path = "get")
     public Training getTraining(
             @RequestHeader(name="Authorization") String token,
-            @RequestParam("number") String number){
+            @RequestParam("number") @Min(1) int number){
         String username = getUsername(token);
         Plan plan = planService.getPlan(username);
         Training tr = trainingService.findTrainingByPlanInfoIdAndTrainingNumber(
-                plan.getId(), Integer.parseInt(number));
+                plan.getId(), number);
         return tr;
     }
 
     @GetMapping(path = "getrunning")
     public Running getRunning(
             @RequestHeader(name="Authorization") String token,
-            @RequestParam("number") String number){
+            @RequestParam("number") @Min(1) int number){
         return getTraining(token, number).getRunning();
     }
 
@@ -53,10 +54,10 @@ public class TrainingController {
     // сделать тренировку выполненной
     @PutMapping(path = "done")
     public void isDoneTraining(@RequestHeader(name="Authorization") String token,
-                               @RequestParam("number") String number){
+                               @RequestParam("number") @Min(1) int number){
         String username = getUsername(token);
         Long planId = planService.getPlan(username).getId();
-        trainingService.isDoneTraining(planId, Long.parseLong(number));
+        trainingService.isDoneTraining(planId, number);
     }
 
     String getUsername(String token){

@@ -21,6 +21,6 @@ public interface TrainingRepo extends JpaRepository<Training, Long> {
     @Transactional
     @Modifying
     @Query("UPDATE Training u SET u.isDone = true WHERE u.plan.id = ?1 AND u.id = ?2")
-    void isDoneTraining(Long PlanId, Long trainingId);
+    void isDoneTraining(Long PlanId, int trainingId);
 
 }

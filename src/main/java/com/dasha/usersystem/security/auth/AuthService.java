@@ -20,7 +20,6 @@ import java.time.LocalDateTime;
 public class AuthService {
 
     private final AppUserService appUserService;
-    private final EmailValidator emailValidator;
     private final ConfirmationTokenService confirmationTokenService;
     private final EmailService emailService;
     private final AppUserInfoService appUserInfoService;
@@ -30,10 +29,6 @@ public class AuthService {
     }
 
     public String register(AuthRequest request) {
-        boolean isEmailValid = emailValidator.test(request.getUsername());
-        if(!isEmailValid){
-            throw new IllegalStateException("email is not valid");
-        }
         appUserService.isUserExists(request.getUsername());
         String token = appUserService.signUpUser(
                 new AppUser(

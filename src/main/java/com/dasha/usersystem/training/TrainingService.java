@@ -38,7 +38,7 @@ public class TrainingService {
         return trainingRepo.findAllByPlanId(id);
     }
     @Transactional
-    public void isDoneTraining(Long planId, Long trainingId){
+    public void isDoneTraining(Long planId, int trainingId){
 
         trainingRepo.isDoneTraining(planId, trainingId);
     }

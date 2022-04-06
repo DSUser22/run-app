@@ -5,6 +5,8 @@ import com.dasha.usersystem.security.jwt.JWTUtility;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping(path = "api/v1/my/info")
@@ -25,7 +27,8 @@ public class AppUserInfoController {
     }
 
     @PutMapping(path = "put")
-    public void putPlan(@RequestHeader(name="Authorization") String token, @RequestBody AppUserInfoRequest request){
+    public void putPlan(@RequestHeader(name="Authorization") String token,
+                        @Valid @RequestBody AppUserInfoRequest request){
         String username = getUsername(token);
         appUserInfoService.modifyUserInfo(username, request);
     }
