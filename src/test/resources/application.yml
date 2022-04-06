@@ -18,10 +18,10 @@ spring:
         format_sql: true
     show-sql: false
   mail:
-    host: smtp.gmail.com
+#    host: smtp.gmail.com
     port: 587
-    username: havegoodrunnings@gmail.com
-    password: ebdzisnwzorfsazd
+#    username: адрес почты для отправки писем
+#    password: пароль для почты
     properties:
       mail:
         smtp:
