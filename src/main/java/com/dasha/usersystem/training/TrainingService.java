@@ -1,9 +1,6 @@
 package com.dasha.usersystem.training;
-import com.dasha.usersystem.training.type.RunningRepo;
-import com.dasha.usersystem.training.type.running.Running;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -21,10 +18,6 @@ public class TrainingService {
         return trainingRepo.findTrainingByAppUserIdAndDate(userId, LocalDate.parse(date))
                 .orElseThrow(()->new IllegalStateException("training not found"));
     }
-    public void saveTraining(Training training){
-        trainingRepo.save(training);
-    }
-
     public int updateIsDone(Long userId, Integer number){
         return trainingRepo.updateIsDone(userId, number, true);
     }

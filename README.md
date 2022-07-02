@@ -15,6 +15,7 @@ By default, start of preparing is beginning of next week or if today is Monday -
 Технологии: Spring Boot, Spring Data JPA, Spring Security.
 БД: PostgreSQL
 
+
 Основные эндпоинты:
 
 api/v1/registration [POST] - регистрация нового пользователя
@@ -36,3 +37,12 @@ api/v1/my/plan [DELETE] - удаление плана
 ![img_8.png](img_8.png)
 api/v1/delete [DELETE] - удаление пользователя
 ![img_9.png](img_9.png)
+
+Требуется заполнить application.yml:
+spring.datasource.password,
+spring.datasource.url,
+spring.datasource.username,
+spring.mail.host,
+spring.mail.port,
+spring.mail.username,
+spring.mail.password.

@@ -1,4 +1,4 @@
-package com.dasha.usersystem.plan.planService;
+package com.dasha.usersystem.plan.creating;
 
 public class Ratio {
     public static int[] ratio(int weeks, int longRun){

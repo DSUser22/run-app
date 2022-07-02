@@ -1,8 +1,10 @@
 package com.dasha.usersystem.security.email;
 
-import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -12,12 +14,12 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 @Service
-@AllArgsConstructor
+@NoArgsConstructor
 public class EmailService implements EmailSender{
-
-    private JavaMailSender mailSender;
+    @Value("${spring.mail.username}")
+    private String email;
+    @Autowired private JavaMailSender mailSender;
     private final static Logger LOGGER = LoggerFactory.getLogger(EmailService.class);
-
     @Override
     @Async
     public void sendToConfirm(String toEmail, String url) {
@@ -27,11 +29,10 @@ public class EmailService implements EmailSender{
             helper.setTo(toEmail);
             helper.setSubject("Подтверждение email");
             
-            helper.setText("Активация аккаунта по ссылке ниже:\n" +
-                    ""+url);
+            helper.setText("Активация аккаунта по ссылке ниже:\n"+url);
 
 
-            helper.setFrom("havegoodrunnings@gmail.com"); // !!! вставить email, с которого будут отправляться письма
+            helper.setFrom(email);
             mailSender.send(mimeMessage);
         } catch (MessagingException e){
             LOGGER.error("sending messages failed", e);
@@ -42,7 +43,7 @@ public class EmailService implements EmailSender{
         try{
         MimeMessage helloMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(helloMessage, "utf-8");
-            helper.setFrom("havegoodrunnings@gmail.com"); // !!! вставить email, с которого будут отправляться письма
+            helper.setFrom(email);
             helper.setTo(toEmail);
             helper.setSubject("Аккаунт подтверждён");
             helper.setText("");

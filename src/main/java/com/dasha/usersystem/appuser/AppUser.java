@@ -55,9 +55,6 @@ public class AppUser implements UserDetails, Serializable {
         this.password = password;
         this.appUserRole = appUserRole;
     }
-    public AppUser(String email){
-        this.username = email;
-    }
 
 
     @Override

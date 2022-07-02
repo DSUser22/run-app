@@ -33,7 +33,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter  {
                 .authorizeRequests()
                 .antMatchers("/api/v1/auth", "/api/v1/registration","/api/v1/confirm")
                 .permitAll().anyRequest().authenticated();
-        //http.logout();
         http
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);

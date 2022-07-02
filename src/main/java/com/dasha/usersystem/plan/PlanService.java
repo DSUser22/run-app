@@ -1,6 +1,7 @@
 package com.dasha.usersystem.plan;
 
-import com.dasha.usersystem.plan.planService.TrainingFactoryService;
+import com.dasha.usersystem.plan.creating.MarathonDateValidator;
+import com.dasha.usersystem.plan.creating.TrainingFactoryService;
 import com.dasha.usersystem.appuser.AppUser;
 import com.dasha.usersystem.appuser.AppUserRepo;
 import lombok.AllArgsConstructor;

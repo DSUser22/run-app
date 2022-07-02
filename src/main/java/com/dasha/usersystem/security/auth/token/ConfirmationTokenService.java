@@ -9,7 +9,6 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class ConfirmationTokenService {
-
     private final ConfirmationTokenRepository repository;
 
     public void saveConfirmationToken(ConfirmationToken token){
@@ -22,10 +21,6 @@ public class ConfirmationTokenService {
 
     public int setConfirmedAt(String token){
         return repository.updateConfirmedAt(token, LocalDateTime.now());
-    }
-
-    public void delete(long userId){
-        repository.deleteAllByAppUserId(userId);
     }
 
 }

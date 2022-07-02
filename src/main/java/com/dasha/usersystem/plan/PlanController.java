@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(path = "api/v1/my/plan")
 @CrossOrigin("*")
 public class PlanController {
-    // для информации о плане
     private final PlanService planService;
     private final JWTUtility jwtUtility;
 

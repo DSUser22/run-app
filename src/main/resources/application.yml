@@ -5,9 +5,9 @@ server:
 
 spring:
   datasource:
-    password: dsuser22
-    url: jdbc:postgresql://localhost:5432/run-db
-    username: postgres
+    password: #
+    url: #
+    username: #
   jpa:
     hibernate:
       ddl-auto: create-drop
@@ -17,10 +17,10 @@ spring:
         format_sql: true
     show-sql: true
   mail:
-    host: smtp.gmail.com
-    port: 587
-    username: havegoodrunnings@gmail.com
-    password: ifkjfkopdwlqccoj
+    host: smtp.gmail.com # change host if you need
+    port: 587 # change host if you need
+    username: #email for sending confirmation letters
+    password: #
     properties:
       mail:
         smtp:

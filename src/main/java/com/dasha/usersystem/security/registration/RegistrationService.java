@@ -75,10 +75,10 @@ public class RegistrationService {
             throw new IllegalStateException("time is over");
         }
 
-        confirmationTokenService.setConfirmedAt(token);  // задаём время подтверждения
+        confirmationTokenService.setConfirmedAt(token);
         String email = confirmationToken.getAppUser().getUsername();
 
-        appUserRepo.enableAppUser(confirmationToken.getAppUser().getUsername()); // делаем user'а доступным
+        appUserRepo.enableAppUser(confirmationToken.getAppUser().getUsername());
         emailService.sendWhenConfirmed(email);
 
         return "confirmed";

@@ -1,8 +1,7 @@
-package com.dasha.usersystem.plan.planService;
+package com.dasha.usersystem.plan.creating;
 
 import com.dasha.usersystem.plan.Plan;
 import com.dasha.usersystem.training.Training;
-import com.dasha.usersystem.training.TrainingService;
 import com.dasha.usersystem.training.TrainingType;
 import com.dasha.usersystem.training.type.running.Gym;
 import com.dasha.usersystem.training.type.running.LongRunning;

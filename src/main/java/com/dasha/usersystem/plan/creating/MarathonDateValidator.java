@@ -1,4 +1,4 @@
-package com.dasha.usersystem.plan;
+package com.dasha.usersystem.plan.creating;
 
 import org.springframework.stereotype.Service;
 
