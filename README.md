@@ -32,7 +32,7 @@ By default, start of preparing is beginning of next week or if today is Monday -
 - api/v1/my/plan/training/all [GET] - получение всех тренировок
 ![img_6.png](img_6.png)
 - api/v1/my/plan/training [GET] - получение тренировки по дате
-![img_7.png](img_7.png)
+![img_7.png](img_7.png) 
 - api/v1/my/plan [DELETE] - удаление плана
 ![img_8.png](img_8.png)
 - api/v1/delete [DELETE] - удаление пользователя
