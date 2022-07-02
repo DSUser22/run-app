@@ -1,6 +1,8 @@
 package com.dasha.usersystem.plan;
 
 import com.dasha.usersystem.appuser.AppUser;
+import com.dasha.usersystem.training.Training;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -8,6 +10,7 @@ import java.io.Serializable;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
+import java.util.List;
 
 import static java.time.temporal.ChronoUnit.WEEKS;
 
@@ -20,13 +23,13 @@ import static java.time.temporal.ChronoUnit.WEEKS;
 public class Plan implements Serializable {
     @Id
     @SequenceGenerator(
-            name = "plan_sequence",
-            sequenceName = "plan_sequence",
+            name = "plan_seq",
+            sequenceName = "plan_seq",
             allocationSize = 1
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "plan_sequence"
+            generator = "plan_seq"
     )
     private Long id;
     private LocalDate marathonDate;
@@ -36,20 +39,22 @@ public class Plan implements Serializable {
     private LocalDate firstTrainingDay;
     private int countOfWeeks;
     private int countOfTrainings;
-    @OneToOne (cascade = {CascadeType.DETACH, CascadeType.MERGE,
-                           CascadeType.REFRESH, CascadeType.PERSIST})
-    @JoinColumn(
-            nullable = false,
-            name = "username",
-            referencedColumnName = "username"
-    )
+    @JsonIgnore
+    @OneToOne(
+            cascade = {CascadeType.DETACH, CascadeType.REFRESH, CascadeType.MERGE},
+            fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private AppUser appUser;
+
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "plan")
+    private List<Training> trainings = null;
 
     public Plan(AppUser appUser, PlanRequest request){
         this.appUser = appUser;
-        this.longRun = request.getLong_run();
-        this.marathonDate = LocalDate.parse(request.getMarathon_day());
-        this.timesAWeek = request.getTimes_a_week();
+        this.longRun = request.getLongRun();
+        this.marathonDate = LocalDate.parse(request.getMarathonDate());
+        this.timesAWeek = request.getTimesAWeek();
 
         firstTrainingDay = getFirstTrainDate();
         countOfWeeks = countWeeks(firstTrainingDay, marathonDate);

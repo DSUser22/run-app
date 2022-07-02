@@ -13,9 +13,9 @@ import javax.validation.constraints.Max;
 @EqualsAndHashCode
 @ToString
 public class PlanRequest {
-    private String marathon_day;
+    private String marathonDate;
     @Min(3)
     @Max(5)
-    private Integer times_a_week;
-    private Integer long_run;
+    private Integer timesAWeek;
+    private Integer longRun;
 }

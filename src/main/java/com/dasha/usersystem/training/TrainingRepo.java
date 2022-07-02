@@ -6,21 +6,23 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface TrainingRepo extends JpaRepository<Training, Long> {
+    @Query("FROM Training t WHERE t.plan.appUser.id = ?1 AND t.date = ?2")
+    Optional<Training> findTrainingByAppUserIdAndDate(Long userId, LocalDate date);
 
-    Optional<Training> findTrainingByPlanIdAndTrainingNumber(Long id, Integer trainingNumber);
+    @Query("FROM Training t WHERE t.plan.appUser.id = ?1 AND t.trainingNumber = ?2")
+    Optional<Training> findTrainingByAppUserIdAndNumber(Long userId, Integer number);
 
-    void deleteAllByPlanId(Long id);
+    @Query("SELECT t FROM Training t WHERE t.plan.appUser.id = ?1")
+    List<Training> findAllByAppUserId(Long userId);
 
-    List<Training> findAllByPlanId(Long id);
-
+    @Query("UPDATE Training t SET t.isDone = ?3 WHERE t.plan.appUser.id = ?1 AND t.trainingNumber = ?2")
     @Transactional
     @Modifying
-    @Query("UPDATE Training u SET u.isDone = true WHERE u.plan.id = ?1 AND u.id = ?2")
-    void isDoneTraining(Long PlanId, int trainingId);
-
+    int updateIsDone(Long userId, Integer number, boolean isDone);
 }

@@ -5,10 +5,9 @@ server:
 
 spring:
   datasource:
-    url: jdbc:h2://mem:db;DB_CLOSE_DELAY=1
-    password: sa
-    username: sa
-    driver-class-name: org.h2.Driver
+    password: dsuser22
+    url: jdbc:postgresql://localhost:5432/run-db
+    username: postgres
   jpa:
     hibernate:
       ddl-auto: create-drop
@@ -16,12 +15,12 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
-    show-sql: false
+    show-sql: true
   mail:
-#    host: smtp.gmail.com
+    host: smtp.gmail.com
     port: 587
-#    username: адрес почты для отправки писем
-#    password: пароль для почты
+    username: havegoodrunnings@gmail.com
+    password: ifkjfkopdwlqccoj
     properties:
       mail:
         smtp:

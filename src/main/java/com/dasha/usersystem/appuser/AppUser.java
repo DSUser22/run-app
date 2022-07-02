@@ -1,5 +1,8 @@
 package com.dasha.usersystem.appuser;
 
+import com.dasha.usersystem.plan.Plan;
+import com.dasha.usersystem.security.auth.token.ConfirmationToken;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +15,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @Getter
 @Setter
@@ -22,22 +26,27 @@ public class AppUser implements UserDetails, Serializable {
 
     @Id
     @SequenceGenerator(
-            name = "app_user_sequence",
-            sequenceName = "app_user_sequence",
+            name = "app_user_seq",
+            sequenceName = "app_user_seq",
             allocationSize = 1
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "app_user_sequence"
+            generator = "app_user_seq"
     )
     private Long id;
     private String username;
     private String password;
     @Enumerated(EnumType.STRING)
     private AppUserRole appUserRole;
+
+    @OneToOne(mappedBy = "appUser", cascade = CascadeType.ALL)
+    private Plan plan;
+    @JsonIgnore
+    @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL)
+    private List<ConfirmationToken> tokens;
     private Boolean locked = false;
-    //private Boolean enabled = false;
-    private Boolean enabled = true; // для удобства
+    private Boolean enabled = true; // false
 
     public AppUser(String email,
                    String password,

@@ -31,7 +31,7 @@ public class EmailService implements EmailSender{
                     ""+url);
 
 
-            helper.setFrom(""); // !!! вставить email, с которого будут отправляться письма
+            helper.setFrom("havegoodrunnings@gmail.com"); // !!! вставить email, с которого будут отправляться письма
             mailSender.send(mimeMessage);
         } catch (MessagingException e){
             LOGGER.error("sending messages failed", e);
@@ -42,7 +42,7 @@ public class EmailService implements EmailSender{
         try{
         MimeMessage helloMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(helloMessage, "utf-8");
-            helper.setFrom(""); // !!! вставить email, с которого будут отправляться письма
+            helper.setFrom("havegoodrunnings@gmail.com"); // !!! вставить email, с которого будут отправляться письма
             helper.setTo(toEmail);
             helper.setSubject("Аккаунт подтверждён");
             helper.setText("");

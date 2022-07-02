@@ -16,6 +16,14 @@ import java.io.Serializable;
 @Setter
 public class Running implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(
+            name = "running_seq",
+            sequenceName = "running_seq",
+            allocationSize = 1
+    )
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "running_seq"
+    )
     private Long id;
 }

@@ -2,6 +2,7 @@ package com.dasha.usersystem.training;
 
 import com.dasha.usersystem.training.type.running.Running;
 import com.dasha.usersystem.plan.Plan;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -32,23 +33,17 @@ public class Training implements Serializable {
     private Integer trainingNumber;
     private Integer weekNumber;
     private LocalDate date;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(
-            nullable = false,
-            name = "plan_id",
-            referencedColumnName = "id"
-    )
+    @ManyToOne(cascade = {CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH})
+    @JoinColumn(name = "plan_id", referencedColumnName = "id")
+    @JsonIgnore
     private Plan plan;
-    @OneToOne(
-            cascade = CascadeType.ALL
-    )
-    @Cascade(org.hibernate.annotations.CascadeType.DELETE)
+
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(
             nullable = false,
             name = "running_id",
             referencedColumnName = "id"
     )
-    @Enumerated(EnumType.STRING)
     private Running running;
     private Boolean isDone = false;
 

@@ -1,8 +1,6 @@
 package com.dasha.usersystem.plan;
 
-import com.dasha.usersystem.training.TrainingRepo;
 import com.dasha.usersystem.plan.planService.TrainingFactoryService;
-import com.dasha.usersystem.appUserInfo.AppUserInfoRepo;
 import com.dasha.usersystem.appuser.AppUser;
 import com.dasha.usersystem.appuser.AppUserRepo;
 import lombok.AllArgsConstructor;
@@ -13,38 +11,35 @@ import org.springframework.transaction.annotation.Transactional;
 @AllArgsConstructor
 public class PlanService {
     private final PlanRepo planRepo;
-    private final TrainingRepo trainingRepo;
     private final AppUserRepo appUserRepo;
-    private final AppUserInfoRepo appUserInfoRepo;
     private final TrainingFactoryService trainingFactoryService;
     private final MarathonDateValidator marathonDateValidator;
 
     @Transactional
-    public void savePlan(String username, PlanRequest request){
-        AppUser appUser = appUserRepo.findByUsername(username).orElseThrow(
+    public void savePlan(Long userId, PlanRequest request){
+        AppUser appUser = appUserRepo.findById(userId).orElseThrow(
                 () ->new IllegalStateException("user not found"));
         Plan plan = new Plan(appUser, request);
         if(!marathonDateValidator.test(plan.getCountOfWeeks())){
             throw new IllegalStateException("very few weeks");
         }
+        if(planRepo.findPlanByAppUserId(userId).isPresent()){
+            throw new IllegalStateException("plan is already exists");
+        }
+        plan.setTrainings(trainingFactoryService.createTrainings(plan));
         planRepo.save(plan);
-        trainingFactoryService.createTrainings(plan);
-        appUserInfoRepo.planExists(appUser, true);
     }
 
     @Transactional
-    public Plan getPlan(String username){
-        return planRepo.findPlanByAppUserUsername(username).orElseThrow(()->new IllegalStateException("plan not found"));
+    public Plan findPlanByAppUserId(Long userId){
+        return planRepo.findPlanByAppUserId(userId).orElseThrow(()->new IllegalStateException("plan not found"));
     }
 
     @Transactional
-    public void deletePlan(String username) {
-        AppUser appUser = appUserRepo.findByUsername(username).orElseThrow(
-                () ->new IllegalStateException("user not found"));
-        Plan plan = getPlan(username);
-        trainingRepo.deleteAllByPlanId(plan.getId());
-        planRepo.delete(plan);
-        appUserInfoRepo.planExists(appUser, false);
+    public void deletePlanByAppUserId(Long userId) {
+        Long planId = planRepo.findPlanByAppUserId(userId).orElseThrow(IllegalStateException::new).getId();
+        planRepo.deleteById(planId);
+        planRepo.flush();
     }
 
 }

@@ -7,8 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -21,9 +19,4 @@ public interface AppUserRepo extends JpaRepository<AppUser, Long> {
     @Modifying
     @Query("UPDATE AppUser u SET u.enabled = true WHERE u.username = ?1")
     int enableAppUser(String username);
-
-    @Transactional
-    @Modifying
-    @Query("DELETE FROM AppUser WHERE username = ?1")
-    void deleteAppUserByUsername(String username);
 }

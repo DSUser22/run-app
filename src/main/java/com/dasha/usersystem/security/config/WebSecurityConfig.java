@@ -1,6 +1,6 @@
 package com.dasha.usersystem.security.config;
 
-import com.dasha.usersystem.appuser.AppUserService;
+import com.dasha.usersystem.security.auth.AuthService;
 import com.dasha.usersystem.security.filter.JWTFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter  {
 
-    private final AppUserService appUserService;
+    private final AuthService authService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     @Autowired
     private final JWTFilter filter;
@@ -31,7 +31,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter  {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/api/v1/auth", "/api/v1/register","/api/v1/confirm")
+                .antMatchers("/api/v1/auth", "/api/v1/registration","/api/v1/confirm")
                 .permitAll().anyRequest().authenticated();
         //http.logout();
         http
@@ -47,7 +47,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter  {
         DaoAuthenticationProvider provider =
                 new DaoAuthenticationProvider();
         provider.setPasswordEncoder(bCryptPasswordEncoder);
-        provider.setUserDetailsService(appUserService);
+        provider.setUserDetailsService(authService);
         return provider;
     }
     @Bean

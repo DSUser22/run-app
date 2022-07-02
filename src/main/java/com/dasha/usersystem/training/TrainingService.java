@@ -5,41 +5,31 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
 @AllArgsConstructor
 public class TrainingService {
     private final TrainingRepo trainingRepo;
-    private final RunningRepo runningRepo;
 
-
-    public Training findTrainingByPlanInfoIdAndTrainingNumber(Long id, Integer trainingNumber){
-        return trainingRepo.findTrainingByPlanIdAndTrainingNumber(id, trainingNumber)
+    public Training findTrainingByAppUserIdAndNumber(Long userId, Integer trainingNumber){
+        return trainingRepo.findTrainingByAppUserIdAndNumber(userId, trainingNumber)
                 .orElseThrow(()->new IllegalStateException("training not found"));
     }
-
-    @Transactional
-    public void deleteAllByPlanId(Long id){
-        trainingRepo.deleteAllByPlanId(id);
+    public Training findTrainingByAppUserIdAndDate(Long userId, String date){
+        return trainingRepo.findTrainingByAppUserIdAndDate(userId, LocalDate.parse(date))
+                .orElseThrow(()->new IllegalStateException("training not found"));
     }
-
-    @Transactional
-    public void saveRunning(Running running){
-        runningRepo.save(running);
-    }
-    @Transactional
     public void saveTraining(Training training){
         trainingRepo.save(training);
     }
 
-    @Transactional
-    public List<Training> getAllTrainings(Long id){
-        return trainingRepo.findAllByPlanId(id);
+    public int updateIsDone(Long userId, Integer number){
+        return trainingRepo.updateIsDone(userId, number, true);
     }
-    @Transactional
-    public void isDoneTraining(Long planId, int trainingId){
 
-        trainingRepo.isDoneTraining(planId, trainingId);
+    public List<Training> getAllTrainings(Long userId){
+        return trainingRepo.findAllByAppUserId(userId);
     }
 }

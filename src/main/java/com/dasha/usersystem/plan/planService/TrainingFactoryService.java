@@ -1,10 +1,13 @@
 package com.dasha.usersystem.plan.planService;
 
-import com.dasha.usersystem.training.TrainingType;
-import com.dasha.usersystem.training.type.running.*;
+import com.dasha.usersystem.plan.Plan;
 import com.dasha.usersystem.training.Training;
 import com.dasha.usersystem.training.TrainingService;
-import com.dasha.usersystem.plan.Plan;
+import com.dasha.usersystem.training.TrainingType;
+import com.dasha.usersystem.training.type.running.Gym;
+import com.dasha.usersystem.training.type.running.LongRunning;
+import com.dasha.usersystem.training.type.running.OrdinaryRunning;
+import com.dasha.usersystem.training.type.running.SpeedRunning;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
+import java.util.List;
 
 import static java.time.DayOfWeek.*;
 
@@ -23,43 +28,43 @@ public class TrainingFactoryService {
     private static final DayOfWeek[] fourDaysAWeek = {TUESDAY, WEDNESDAY, FRIDAY, SUNDAY};
     private static final DayOfWeek[] fiveDaysAWeek = {TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SUNDAY};
 
-    private final TrainingService trainingService;
-
     @Transactional
-    public void createTrainings(Plan plan){
+    public List<Training> createTrainings(Plan plan){
         int weeks = plan.getCountOfWeeks();
         int timesAWeek = plan.getTimesAWeek();
         int longRun = plan.getLongRun();
         int[] ratio = Ratio.ratio(weeks, longRun);
         switch(timesAWeek){
             case 3:
-                createThreeTimesAWeek(weeks, plan, ratio);
-                break;
+                return createThreeTimesAWeek(weeks, plan, ratio);
             case 4:
-                createFourTimesAWeek(weeks, plan, ratio);
-                break;
-            case 5:
-                createFiveTimesAWeek(weeks, plan, ratio);
-                break;
+                return createFourTimesAWeek(weeks, plan, ratio);
+            default:
+                return createFiveTimesAWeek(weeks, plan, ratio);
         }
     }
 
     @Transactional
-    public void createThreeTimesAWeek(int weeks, Plan plan, int[] ratio){
+    public List<Training> createThreeTimesAWeek(int weeks, Plan plan, int[] ratio){
+        List<Training> trainings = new ArrayList<>();
+
         LocalDate startWeek = plan.getFirstTrainingDay();
         int timesAWeek = plan.getTimesAWeek();
         for (int week = 1; week < weeks; week++) {
             int[] dist = distanceForTrainings(ratio[week]);
             LocalDate[] dates = datesForAWeek(startWeek, timesAWeek);
-            creatingTrainingOR(dist[0],week*3-2, week, dates[0], plan);
-            creatingTrainingOR(dist[1],week*3-1, week, dates[1], plan);
-            creatingTrainingLR(dist[2],week*3, week, dates[2], plan);
+            trainings.add(creatingTrainingOR(dist[0],week*3-2, week, dates[0], plan));
+            trainings.add(creatingTrainingOR(dist[1],week*3-1, week, dates[1], plan));
+            trainings.add(creatingTrainingLR(dist[2],week*3, week, dates[2], plan));
+            startWeek = startWeek.with(TemporalAdjusters.next(MONDAY));
         }
         int trainingNumber = (weeks-1)*3;
-        creatingLastWeek(trainingNumber, weeks, startWeek, plan);
+        trainings.addAll(creatingLastWeek(trainingNumber, weeks, startWeek, plan));
+        return trainings;
     }
     @Transactional
-    public void createFourTimesAWeek(int weeks, Plan plan, int[] ratio){
+    public List<Training> createFourTimesAWeek(int weeks, Plan plan, int[] ratio){
+        List<Training> trainings = new ArrayList<>();
         LocalDate startWeek = plan.getFirstTrainingDay();
         int timesAWeek = plan.getTimesAWeek();
         int level = 1;
@@ -71,16 +76,21 @@ public class TrainingFactoryService {
             }
             int[] dist = distanceForTrainings(ratio[week]);
             LocalDate[] dates = datesForAWeek(startWeek, timesAWeek);
-            creatingTrainingOR(dist[0],week*4-3, week, dates[0], plan);
-            int speedDistance = creatingTrainingSR(level,week*4-2, week, dates[1], plan);
-            creatingTrainingOR(dist[1] - speedDistance,week*4-1, week, dates[2], plan);
-            creatingTrainingLR(dist[2],week*4, week, dates[3], plan);
+            trainings.add(creatingTrainingOR(dist[0],week*4-3, week, dates[0], plan));
+            Training t = creatingTrainingSR(level,week*4-2, week, dates[1], plan);
+            SpeedRunning sr = (SpeedRunning) t.getRunning();
+            trainings.add(t);
+            trainings.add(creatingTrainingOR(dist[1] - sr.getDistance(),week*4-1, week, dates[2], plan));
+            trainings.add(creatingTrainingLR(dist[2],week*4, week, dates[3], plan));
+            startWeek = startWeek.with(TemporalAdjusters.next(MONDAY));
         }
         int trainingNumber = (weeks-1)*4;
-        creatingLastWeek(trainingNumber, weeks, startWeek, plan);
+        trainings.addAll(creatingLastWeek(trainingNumber, weeks, startWeek, plan));
+        return trainings;
     }
     @Transactional
-    public void createFiveTimesAWeek(int weeks, Plan plan, int[] ratio){
+    public List<Training> createFiveTimesAWeek(int weeks, Plan plan, int[] ratio){
+        List<Training> trainings = new ArrayList<>();
         LocalDate startWeek = plan.getFirstTrainingDay();
         int timesAWeek = plan.getTimesAWeek();
         int level = 1;
@@ -93,67 +103,60 @@ public class TrainingFactoryService {
             int[] dist = distanceForTrainings(ratio[week]);
             LocalDate[] dates = datesForAWeek(startWeek, timesAWeek);
 
-            creatingTrainingOR(dist[0],week*5-4, week, dates[0], plan);
-            int speedDistance = creatingTrainingSR(level,week*5-3, week, dates[1], plan);
-            creatingTrainingOR(dist[1] - speedDistance,week*5-2, week, dates[2], plan);
-            creatingTrainingG(week*5-1, week, dates[3], plan);
-            creatingTrainingLR(dist[2],week*5, week, dates[5], plan);
-            startWeek = startWeek.with(TemporalAdjusters.nextOrSame(MONDAY));
+            trainings.add(creatingTrainingOR(dist[0],week*5-4, week, dates[0], plan));
+            Training t = creatingTrainingSR(level,week*5-3, week, dates[1], plan);
+            SpeedRunning sr = (SpeedRunning) t.getRunning();
+            trainings.add(t);
+            trainings.add(creatingTrainingOR(dist[1] - sr.getDistance(),week*5-2, week, dates[2], plan));
+            trainings.add(creatingTrainingG(week*5-1, week, dates[3], plan));
+            trainings.add(creatingTrainingLR(dist[2],week*5, week, dates[4], plan));
+            startWeek = startWeek.with(TemporalAdjusters.next(MONDAY));
         }
         int trainingNumber = (weeks-1)*5;
-        creatingLastWeek(trainingNumber, weeks, startWeek, plan);
+        trainings.addAll(creatingLastWeek(trainingNumber, weeks, startWeek, plan));
+        return trainings;
     }
 
-    public void creatingTrainingOR(int distance,
+    public Training creatingTrainingOR(int distance,
                                          int trainingNumber,
                                          int week,
                                          LocalDate startOfWeek,
                                          Plan plan){
         OrdinaryRunning r = new OrdinaryRunning(distance);
-        trainingService.saveRunning(r);
-        Training t = new Training(trainingNumber, week, startOfWeek, plan, r);
-        trainingService.saveTraining(t);
+        return new Training(trainingNumber, week, startOfWeek, plan, r);
     }
-    public void creatingTrainingLR(int distance,
+    public Training creatingTrainingLR(int distance,
                                          int trainingNumber,
                                          int week,
                                          LocalDate startOfWeek,
                                          Plan plan){
         LongRunning r = new LongRunning(distance);
-        trainingService.saveRunning(r);
-        Training t = new Training(trainingNumber, week, startOfWeek, plan, r);
-        trainingService.saveTraining(t);
+        return new Training(trainingNumber, week, startOfWeek, plan, r);
     }
-    public int creatingTrainingSR(int level,
+    public Training creatingTrainingSR(int level,
                                          int trainingNumber,
                                          int week,
                                          LocalDate startOfWeek,
                                          Plan plan){
         SpeedRunning r = new SpeedRunning(level);
-        trainingService.saveRunning(r);
-        Training t = new Training(trainingNumber, week, startOfWeek, plan, r);
-        trainingService.saveTraining(t);
-        return r.getDistance();
+        return new Training(trainingNumber, week, startOfWeek, plan, r);
     }
-    public void creatingTrainingG(int trainingNumber,
+    public Training creatingTrainingG(int trainingNumber,
                                          int week,
                                          LocalDate startOfWeek,
                                          Plan plan){
-        Gym g = new Gym();
-        trainingService.saveRunning(g);
-        Training t = new Training(trainingNumber, week, startOfWeek, plan, g);
-        trainingService.saveTraining(t);
+        return new Training(trainingNumber, week, startOfWeek, plan, new Gym());
     }
-    public void creatingLastWeek (int trainingNumber,int week, LocalDate startWeek,
+    public List<Training> creatingLastWeek (int trainingNumber,int week, LocalDate startWeek,
                                  Plan plan){
+        List<Training> lastWeek = new ArrayList<>();
         LocalDate[] dates = datesForAWeek(startWeek, 3);
-        creatingTrainingOR(5,trainingNumber+1,week, dates[0], plan);
-        creatingTrainingOR(5,trainingNumber+2,week, dates[1], plan);
+        lastWeek.add(creatingTrainingOR(5,trainingNumber+1,week, dates[0], plan));
+        lastWeek.add(creatingTrainingOR(5,trainingNumber+2,week, dates[1], plan));
         OrdinaryRunning r = new OrdinaryRunning(42);
         r.setType(TrainingType.MARATHON);
-        trainingService.saveRunning(r);
-        Training t = new Training(trainingNumber+3, week, dates[2], plan, r);
-        trainingService.saveTraining(t);
+        lastWeek.add(new Training(trainingNumber+3, week, dates[2], plan, r));
+        return lastWeek;
     }
 
     public int[] distanceForTrainings(int weekDistance){

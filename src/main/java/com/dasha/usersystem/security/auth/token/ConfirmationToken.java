@@ -12,13 +12,13 @@ import java.time.LocalDateTime;
 public class ConfirmationToken {
     @Id
     @SequenceGenerator(
-            name="confirmation_token_sequence",
-            sequenceName = "confirmation_token_sequence",
+            name="conf_token_seq",
+            sequenceName = "conf_token_seq",
             allocationSize = 1
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "confirmation_token_sequence"
+            generator = "conf_token_seq"
     )
     private Long Id;
 
@@ -36,8 +36,8 @@ public class ConfirmationToken {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(
             nullable = false,
-            name = "username",
-            referencedColumnName = "username"
+            name = "user_id",
+            referencedColumnName = "id"
     )
     private AppUser appUser;
 

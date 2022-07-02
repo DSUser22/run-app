@@ -1,7 +1,5 @@
 package com.dasha.usersystem.training;
 
-import com.dasha.usersystem.plan.Plan;
-import com.dasha.usersystem.plan.PlanService;
 import com.dasha.usersystem.security.jwt.JWTUtility;
 import com.dasha.usersystem.training.type.running.Running;
 import lombok.AllArgsConstructor;
@@ -15,52 +13,43 @@ import java.util.List;
 @RestController
 public class TrainingController {
     private final JWTUtility jwtUtility;
-    private final PlanService planService;
     private final TrainingService trainingService;
 
-    @DeleteMapping(path = "delete")
-    public void deleteTrainings(@RequestHeader(name="Authorization") String token){
-        String username = getUsername(token);
-        Plan plan = planService.getPlan(username);
-        trainingService.deleteAllByPlanId(plan.getId());
-    }
-
     @GetMapping(path = "get")
-    public Training getTraining(
+    public Training findTrainingByNumber(
             @RequestHeader(name="Authorization") String token,
             @RequestParam("number") @Min(1) int number){
-        String username = getUsername(token);
-        Plan plan = planService.getPlan(username);
-        Training tr = trainingService.findTrainingByPlanInfoIdAndTrainingNumber(
-                plan.getId(), number);
-        return tr;
+        Long userId = jwtUtility.getIdFromToken(token);
+        Training t = trainingService.findTrainingByAppUserIdAndNumber(userId, number);
+        return t;
+    }
+    @GetMapping()
+    public Training findTrainingByDate(
+            @RequestHeader(name="Authorization") String token,
+            @RequestBody DateRequest request){
+        Long userId = jwtUtility.getIdFromToken(token);
+        Training t = trainingService.findTrainingByAppUserIdAndDate(userId, request.getDate());
+        return t;
     }
 
-    @GetMapping(path = "getrunning")
+    @GetMapping(path = "running")
     public Running getRunning(
             @RequestHeader(name="Authorization") String token,
             @RequestParam("number") @Min(1) int number){
-        return getTraining(token, number).getRunning();
+        Long userId = jwtUtility.getIdFromToken(token);
+        return trainingService.findTrainingByAppUserIdAndNumber(userId, number).getRunning();
     }
 
-    @GetMapping(path = "getall")
+    @GetMapping(path = "all")
     public List<Training> getAllTrainings(
             @RequestHeader(name="Authorization") String token){
-        String username = getUsername(token);
-        Plan plan = planService.getPlan(username);
-        return trainingService.getAllTrainings(plan.getId());
+        Long userId = jwtUtility.getIdFromToken(token);
+        return trainingService.getAllTrainings(userId);
     }
-
-    // сделать тренировку выполненной
-    @PutMapping(path = "done")
+    @PutMapping()
     public void isDoneTraining(@RequestHeader(name="Authorization") String token,
                                @RequestParam("number") @Min(1) int number){
-        String username = getUsername(token);
-        Long planId = planService.getPlan(username).getId();
-        trainingService.isDoneTraining(planId, number);
-    }
-
-    String getUsername(String token){
-        return jwtUtility.getUsernameFromToken(token.substring(7));
+        Long userId = jwtUtility.getIdFromToken(token);
+        trainingService.updateIsDone(userId, number);
     }
 }

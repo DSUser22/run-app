@@ -1,8 +1,5 @@
 package com.dasha.usersystem.security.auth;
 
-import com.dasha.usersystem.appUserInfo.AppUserInfoService;
-import com.dasha.usersystem.appuser.AppUserService;
-import com.dasha.usersystem.plan.PlanService;
 import com.dasha.usersystem.security.auth.token.ConfirmationTokenService;
 import com.dasha.usersystem.security.jwt.JWTUtility;
 import com.dasha.usersystem.security.jwt.JWTResponse;
@@ -23,20 +20,12 @@ import javax.validation.Valid;
 public class AuthController {
 
     private final AuthService authService;
-    private final PlanService planService;
-    private final AppUserService appUserService;
-    private final AppUserInfoService appUserInfoService;
-    private final ConfirmationTokenService confirmationTokenService;
-
-    @Autowired
     private final JWTUtility jwtUtility;
+    private final ConfirmationTokenService confirmationTokenService;
     @Autowired
     private final AuthenticationManager authenticationManager;
 
-    @PostMapping(path = "register")
-    public String register(@Valid @RequestBody AuthRequest request){
-        return authService.register(request);
-    }
+
 
     @PostMapping(path = "auth")
     public JWTResponse auth(@Valid @RequestBody AuthRequest request){
@@ -51,27 +40,9 @@ public class AuthController {
         final String token = jwtUtility.generateToken(userDetails);
         return new JWTResponse(token);
     }
-
-    @GetMapping(path = "confirm")
-    public String confirm(@RequestParam("token") String token){
-        return authService.confirmToken(token);
-    }
-
     @DeleteMapping(path = "delete")
     public void delete(@RequestHeader(name="Authorization") String token){
-        String username = getUsername(token);
-
-        planService.deletePlan(username);
-        confirmationTokenService.delete(username);
-        appUserInfoService.deleteAppUserInfo(username);
-        appUserService.deleteAppUser(username);
-    }
-    @GetMapping(path = "hello")
-    public String hello(){
-        return "hello, guest";
-    }
-
-    String getUsername(String token){
-        return jwtUtility.getUsernameFromToken(token.substring(7));
+        Long userId = jwtUtility.getIdFromToken(token);
+        authService.deleteAppUser(userId);
     }
 }
