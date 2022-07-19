@@ -1,6 +1,8 @@
 package com.dasha.usersystem.security.email;
 
+import com.dasha.usersystem.exception.registration.SendingMessageException;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +17,11 @@ import javax.mail.internet.MimeMessage;
 
 @Service
 @NoArgsConstructor
+@Slf4j
 public class EmailService implements EmailSender{
     @Value("${spring.mail.username}")
     private String email;
     @Autowired private JavaMailSender mailSender;
-    private final static Logger LOGGER = LoggerFactory.getLogger(EmailService.class);
     @Override
     @Async
     public void sendToConfirm(String toEmail, String url) {
@@ -28,18 +30,17 @@ public class EmailService implements EmailSender{
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
             helper.setTo(toEmail);
             helper.setSubject("Подтверждение email");
-            
+
             helper.setText("Активация аккаунта по ссылке ниже:\n"+url);
 
 
             helper.setFrom(email);
             mailSender.send(mimeMessage);
         } catch (MessagingException e){
-            LOGGER.error("sending messages failed", e);
-            throw new IllegalStateException("sending message failed");
+            throw new SendingMessageException("sending message failed");
         }
     }
-    public void sendWhenConfirmed(String toEmail){
+    public void sendWhenConfirmed(String toEmail) {
         try{
         MimeMessage helloMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(helloMessage, "utf-8");
@@ -49,8 +50,8 @@ public class EmailService implements EmailSender{
             helper.setText("");
             mailSender.send(helloMessage);
         } catch (MessagingException e){
-            LOGGER.error("sending message after confirmation failed", e);
-            throw new IllegalStateException("sending message failed");
+            log.error("sending message after confirmation failed ", e);
+            throw new SendingMessageException("sending message failed");
         }
     }
 }

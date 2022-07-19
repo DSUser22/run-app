@@ -163,7 +163,6 @@ public class TrainingFactoryService {
         dist[2] = (int)(Math.ceil((double)weekDistance/2));
         dist[1] = weekDistance/4;
         dist[0] = weekDistance-dist[1]-dist[2];
-        System.out.println("0: "+dist[0]+", 1: "+dist[1]+", 2: "+dist[2]);
         return dist;
     }
 

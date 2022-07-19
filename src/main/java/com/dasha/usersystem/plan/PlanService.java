@@ -1,5 +1,6 @@
 package com.dasha.usersystem.plan;
 
+import com.dasha.usersystem.exception.plan.PlanException;
 import com.dasha.usersystem.plan.creating.MarathonDateValidator;
 import com.dasha.usersystem.plan.creating.TrainingFactoryService;
 import com.dasha.usersystem.appuser.AppUser;
@@ -21,11 +22,11 @@ public class PlanService {
         AppUser appUser = appUserRepo.findById(userId).orElseThrow(
                 () ->new IllegalStateException("user not found"));
         Plan plan = new Plan(appUser, request);
-        if(!marathonDateValidator.test(plan.getCountOfWeeks())){
-            throw new IllegalStateException("very few weeks");
+        if(!marathonDateValidator.isBiggerThan16(plan.getCountOfWeeks())){
+            throw new PlanException("very few weeks");
         }
         if(planRepo.findPlanByAppUserId(userId).isPresent()){
-            throw new IllegalStateException("plan is already exists");
+            throw new PlanException("plan already exists");
         }
         plan.setTrainings(trainingFactoryService.createTrainings(plan));
         planRepo.save(plan);
@@ -33,7 +34,7 @@ public class PlanService {
 
     @Transactional
     public Plan findPlanByAppUserId(Long userId){
-        return planRepo.findPlanByAppUserId(userId).orElseThrow(()->new IllegalStateException("plan not found"));
+        return planRepo.findPlanByAppUserId(userId).orElseThrow(()->new PlanException("plan not found"));
     }
 
     @Transactional

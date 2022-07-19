@@ -17,9 +17,9 @@ spring:
         format_sql: true
     show-sql: true
   mail:
-    host: smtp.gmail.com # change host if you need
-    port: 587 # change host if you need
-    username: #email for sending confirmation letters
+    host: smtp.gmail.com
+    port: 587
+    username: #
     password: #
     properties:
       mail:
@@ -33,5 +33,10 @@ spring:
           timeout: 3000
           writetimeout: 5000
 
-jwt:
-  secret: dasha
+app:
+  jwtSecret: dasha
+  jwtExpirationMs: 3600
+# jwtExpirationMs: 60  in seconds
+  jwtRefreshExpirationMs: 86400
+#  jwtRefreshExpirationMs: 100  in seconds
+  jwtCookie: "runyourbest"

@@ -1,6 +1,8 @@
 package com.dasha.usersystem.plan;
-import com.dasha.usersystem.security.jwt.JWTUtility;
+import com.dasha.usersystem.security.jwt.JwtUtility;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -9,20 +11,22 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin("*")
 public class PlanController {
     private final PlanService planService;
-    private final JWTUtility jwtUtility;
+    private final JwtUtility jwtUtility;
 
     @PostMapping()
-    public void createPlan(@RequestHeader(name="Authorization") String token, @RequestBody PlanRequest request){
-        planService.savePlan(jwtUtility.getIdFromToken(token), request);
+    public ResponseEntity<?> createPlan(@RequestHeader(name="Authorization") String token, @RequestBody PlanRequest request){
+        planService.savePlan(jwtUtility.getIdFromJwtToken(token), request);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping()
-    public Plan getPlan(@RequestHeader(name="Authorization") String token){
-        return planService.findPlanByAppUserId(jwtUtility.getIdFromToken(token));
+    public ResponseEntity<Plan> getPlan(@RequestHeader(name="Authorization") String token){
+        return ResponseEntity.ok(planService.findPlanByAppUserId(jwtUtility.getIdFromJwtToken(token)));
     }
 
     @DeleteMapping()
-    public void deletePlan(@RequestHeader(name="Authorization") String token){
-        planService.deletePlanByAppUserId(jwtUtility.getIdFromToken(token));
+    public ResponseEntity<?> deletePlan(@RequestHeader(name="Authorization") String token){
+        planService.deletePlanByAppUserId(jwtUtility.getIdFromJwtToken(token));
+        return ResponseEntity.ok().build();
     }
 }

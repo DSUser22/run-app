@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class MarathonDateValidator {
-    public boolean test(int countOfWeeks){
+    public boolean isBiggerThan16(int countOfWeeks){
         return countOfWeeks>16;
     }
 }

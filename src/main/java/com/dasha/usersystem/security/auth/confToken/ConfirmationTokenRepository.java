@@ -1,4 +1,4 @@
-package com.dasha.usersystem.security.auth.token;
+package com.dasha.usersystem.security.auth.confToken;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -25,4 +25,10 @@ public interface ConfirmationTokenRepository extends JpaRepository<ConfirmationT
     @Modifying
     @Query("DELETE FROM ConfirmationToken c WHERE c.appUser.id = ?1")
     void deleteAllByAppUserId(Long userId);
+
+    @Query(nativeQuery = true, value = "SELECT * FROM confirmation_token WHERE user_id = ?1 order by id desc LIMIT 1")
+    ConfirmationToken findLastConfTokenByAppUserId(Long userId);
+
+    /*@Query("SELECT ConfirmationToken FROM ConfirmationToken c WHERE c.appUser.id = ?1 order by id desc  LIMIT 1")
+    LocalDateTime findLastByAppUserId2(Long userId);*/
 }

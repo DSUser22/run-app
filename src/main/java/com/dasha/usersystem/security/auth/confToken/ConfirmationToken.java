@@ -1,4 +1,4 @@
-package com.dasha.usersystem.security.auth.token;
+package com.dasha.usersystem.security.auth.confToken;
 
 import com.dasha.usersystem.appuser.AppUser;
 import lombok.*;

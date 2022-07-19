@@ -1,4 +1,4 @@
-package com.dasha.usersystem.security.auth.token;
+package com.dasha.usersystem.security.auth.confToken;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,4 +23,7 @@ public class ConfirmationTokenService {
         return repository.updateConfirmedAt(token, LocalDateTime.now());
     }
 
+    public ConfirmationToken findLastConfTokenByAppUserId(Long userId){
+        return repository.findLastConfTokenByAppUserId(userId);
+    }
 }

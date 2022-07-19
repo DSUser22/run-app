@@ -5,9 +5,9 @@ server:
 
 spring:
   datasource:
-    password: #
-    url: #
-    username: #
+    password: dsuser22
+    url: jdbc:postgresql://localhost:5432/run-db
+    username: postgres
   jpa:
     hibernate:
       ddl-auto: create-drop
@@ -17,10 +17,10 @@ spring:
         format_sql: true
     show-sql: true
   mail:
-    host: smtp.gmail.com # change host if you need
+    host: smtp.gmail.com
     port: 587
-    username: #email for sending confirmation letters
-    password: #
+    username: havegoodrunnings@gmail.com
+    password: ilxalufkoflbgjhy
     properties:
       mail:
         smtp:
@@ -33,5 +33,10 @@ spring:
           timeout: 3000
           writetimeout: 5000
 
-jwt:
-  secret: dasha
+app:
+  jwtSecret: dasha
+  #  jwtExpirationMs: 3600000
+  jwtExpirationMs: 60000
+  #  jwtRefreshExpirationMs: 86400000
+  jwtRefreshExpirationMs: 100000
+  jwtCookie: "runyourbest"

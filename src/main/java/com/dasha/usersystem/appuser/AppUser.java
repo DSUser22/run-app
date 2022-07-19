@@ -1,27 +1,22 @@
 package com.dasha.usersystem.appuser;
 
+import com.dasha.usersystem.appuser.role.Role;
 import com.dasha.usersystem.plan.Plan;
-import com.dasha.usersystem.security.auth.token.ConfirmationToken;
+import com.dasha.usersystem.refreshToken.RefreshToken;
+import com.dasha.usersystem.security.auth.confToken.ConfirmationToken;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@EqualsAndHashCode
 @Entity
+@Data
+@NoArgsConstructor
 public class AppUser implements UserDetails, Serializable {
 
     @Id
@@ -37,40 +32,51 @@ public class AppUser implements UserDetails, Serializable {
     private Long id;
     private String username;
     private String password;
-    @Enumerated(EnumType.STRING)
-    private AppUserRole appUserRole;
 
     @OneToOne(mappedBy = "appUser", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Plan plan;
+
+    @OneToOne(mappedBy = "appUser", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private RefreshToken refreshToken;
+
     @JsonIgnore
     @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL)
     private List<ConfirmationToken> tokens;
-    private Boolean locked = false;
-    private Boolean enabled = true; // false
 
-    public AppUser(String email,
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(	name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Collection<Role> authorities;
+    private Boolean locked = false;
+    private Boolean enabled = false;
+
+    public AppUser(String username,
                    String password,
-                   AppUserRole appUserRole) {
-        this.username = email;
+                   Collection<Role> authorities) {
+        this.username = username;
         this.password = password;
-        this.appUserRole = appUserRole;
+        this.authorities = authorities;
+    }
+    public AppUser(Long id, String username,
+                   String password,
+                   Collection<Role> authorities) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.authorities = authorities;
     }
 
+    public AppUser(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(appUserRole.name());
-        return Collections.singletonList(authority);
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public String getUsername() {
-        return username;
+        return authorities;
     }
 
     @Override
