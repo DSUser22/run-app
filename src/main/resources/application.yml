@@ -35,8 +35,6 @@ spring:
 
 app:
   jwtSecret: dasha
-  jwtExpirationMs: 3600
-# jwtExpirationMs: 60  in seconds
-  jwtRefreshExpirationMs: 86400
-#  jwtRefreshExpirationMs: 100  in seconds
+  accessTokenExpirationSeconds: 120
+  refreshTokenExpirationDays: 30
   jwtCookie: "runyourbest"

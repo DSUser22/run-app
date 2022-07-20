@@ -36,7 +36,7 @@ public class RegistrationService {
     private final EmailService emailService;
     private PasswordEncoder encoder;
     @Transactional
-    public ResponseEntity<?> register(SignupRequest request) {
+    public void register(SignupRequest request) {
         String username = request.getUsername();
         String password = request.getPassword();
         if(appUserRepo.findByUsername(username).isPresent()){
@@ -65,32 +65,13 @@ public class RegistrationService {
         Role userRole = roleRepository.findByName(ERole.USER)
                 .orElseThrow(() -> new RoleDoNotExistException("role wasn't found"));
         roles.add(userRole);
-        /*
-        if (strRoles == null) {
-            Role userRole = roleRepository.findByName(ERole.USER)
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-            roles.add(userRole);
-        } else {
-            strRoles.forEach(role -> {
-                if(role.equals("admin")){
-                    Role adminRole = roleRepository.findByName(ERole.ADMIN)
-                            .orElseThrow(() -> new RoleDoNotExistsException("role wasn't found"));
-                    roles.add(adminRole);
-                }
-                Role userRole = roleRepository.findByName(ERole.USER)
-                        .orElseThrow(() -> new RoleDoNotExistsException("role wasn't found"));
-                roles.add(userRole);
-            });
-        }*/
         user.setAuthorities(roles);
 
         // проверка на последний токен пользователя
 
         sendConfToken(user);
 
-        appUserRepo.save(user);
-
-        return ResponseEntity.status(HttpStatus.CREATED).build(); // need to confirm
+        appUserRepo.save(user); // need to confirm
     }
     public void sendConfToken(AppUser appUser){
 
@@ -99,7 +80,7 @@ public class RegistrationService {
         ConfirmationToken confirmationToken = new ConfirmationToken(
                 token,
                 LocalDateTime.now(),
-                LocalDateTime.now().plusMinutes(1), // 15
+                LocalDateTime.now().plusMinutes(15),
                 appUser
         );
         String link = "http://localhost:8080/api/v1/auth/confirm?token="+token;
@@ -110,7 +91,7 @@ public class RegistrationService {
         confirmationTokenService.saveConfirmationToken(confirmationToken);
     }
 
-    public ResponseEntity<?> confirmToken(String token){
+    public void confirmToken(String token){
         ConfirmationToken confirmationToken = confirmationTokenService
                 .getToken(token)
                 .orElseThrow(()->new ConfirmationException("token not found"));
@@ -131,6 +112,5 @@ public class RegistrationService {
 
         appUserRepo.enableAppUser(confirmationToken.getAppUser().getUsername());
         emailService.sendWhenConfirmed(email);
-        return ResponseEntity.ok().build();
     }
 }

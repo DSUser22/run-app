@@ -20,8 +20,11 @@ import java.util.Map;
 public class JwtUtility implements Serializable {
     @Value("${app.jwtSecret}")
     private String jwtSecret;
-    @Value("${app.jwtExpirationMs}")
-    private int jwtExpirationMs;
+    @Value("${app.accessTokenExpirationSeconds}")
+    private int accessTokenExpirationSeconds;
+
+    @Value("${app.refreshTokenExpirationDays}")
+    private int refreshTokenExpirationDays;
     @Value("${app.jwtCookie}")
     private String jwtCookie;
     @Autowired
@@ -33,7 +36,7 @@ public class JwtUtility implements Serializable {
         Long userId = userPrincipal.getId();
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(userId);
         ResponseCookie cookie = ResponseCookie.from(jwtCookie, refreshToken.getToken())
-                .path("/api/v1/auth").maxAge(100)
+                .path("/api/v1/auth").maxAge(refreshTokenExpirationDays* 86400L)
                 .httpOnly(true).secure(false)
                 .sameSite("strict").build();
         return cookie;
@@ -49,7 +52,7 @@ public class JwtUtility implements Serializable {
                 .setClaims(claims)
                 .setSubject(username)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs*1000))
+                .setExpiration(new Date((new Date()).getTime() + accessTokenExpirationSeconds*1000))
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
     }

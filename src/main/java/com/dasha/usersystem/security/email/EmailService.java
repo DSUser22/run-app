@@ -29,9 +29,9 @@ public class EmailService implements EmailSender{
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
             helper.setTo(toEmail);
-            helper.setSubject("Подтверждение email");
+            helper.setSubject("Confirmation email");
 
-            helper.setText("Активация аккаунта по ссылке ниже:\n"+url);
+            helper.setText("Click on the link to activate your account:\n"+url);
 
 
             helper.setFrom(email);
@@ -46,7 +46,7 @@ public class EmailService implements EmailSender{
         MimeMessageHelper helper = new MimeMessageHelper(helloMessage, "utf-8");
             helper.setFrom(email);
             helper.setTo(toEmail);
-            helper.setSubject("Аккаунт подтверждён");
+            helper.setSubject("Account confirmed");
             helper.setText("");
             mailSender.send(helloMessage);
         } catch (MessagingException e){

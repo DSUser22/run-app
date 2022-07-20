@@ -51,7 +51,7 @@ public class AppUser implements UserDetails, Serializable {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Collection<Role> authorities;
     private Boolean locked = false;
-    private Boolean enabled = false;
+    private Boolean enabled = true;
 
     public AppUser(String username,
                    String password,

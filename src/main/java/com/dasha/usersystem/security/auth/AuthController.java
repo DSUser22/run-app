@@ -31,6 +31,8 @@ public class AuthController {
 
     private JwtUtility jwtUtility;
 
+
+
     @DeleteMapping(path = "delete")
     public ResponseEntity<?> delete(@RequestHeader(name="Authorization") String token){
         Long userId = jwtUtility.getIdFromJwtToken(token);
