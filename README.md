@@ -16,7 +16,7 @@ By default, start of preparing is beginning of next week or if today is Monday -
 
 ## Tech stack:
 
-Spring Boot, Spring Data JPA, Spring Security.
+Spring Boot, Spring Data JPA, Spring Security, Hibernate ORM.
 
 **Database** : PostgreSQL
 
@@ -34,13 +34,21 @@ mvn package
 java -jar target/userSystem-0.0.1-SNAPSHOT.jar
 ```
 <h3>Required to fill gaps in application.yml: </h3>
+
 - spring.datasource.password,
+
 - spring.datasource.url,
+
 - spring.datasource.username,
+
 - spring.mail.host,
+
 - spring.mail.port,
+
 - spring.mail.username,
+
 - spring.mail.password.
+
 
 ## Main endpoints:
 
